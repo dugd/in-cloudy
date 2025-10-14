@@ -12,3 +12,6 @@ def healthcheck():
 @router.get("/time")
 def get_time():
     return {"server_time": datetime.datetime.now().isoformat()}
+
+
+__all__ = ["router"]
