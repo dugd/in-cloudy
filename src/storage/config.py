@@ -32,3 +32,6 @@ class AzureConfig:
 
 
 azure_config = AzureConfig()
+
+
+__all__ = ["azure_config"]

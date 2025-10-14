@@ -10,7 +10,9 @@ async def upload_file(file: UploadFile = File(...)):
     """Upload a file to Azure Blob Storage."""
     try:
         filename = service.upload_file(file)
-        return {"message": f"File '{filename}' successfully uploaded to Azure Blob Storage."}
+        return {
+            "message": f"File '{filename}' successfully uploaded to Azure Blob Storage."
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -41,8 +43,13 @@ async def delete_file(filename: str):
     """Delete a file from Azure Blob Storage."""
     try:
         service.delete_file(filename)
-        return {"message": f"File '{filename}' successfully deleted from Azure Blob Storage."}
+        return {
+            "message": f"File '{filename}' successfully deleted from Azure Blob Storage."
+        }
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+__all__ = ["router"]
