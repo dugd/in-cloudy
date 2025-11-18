@@ -52,3 +52,10 @@ class Config:
     allow_population_by_field_name = True
     allow_population_by_alias = True
     extra = "ignore"
+
+
+# for: any
+class ErrorAPI(BaseModel):
+    """API response for an error."""
+    code: int
+    message: str

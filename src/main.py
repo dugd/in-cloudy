@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from src.core import health_router
 from src.storage import storage_router
+from src.external_api import external_api_router
 
 app = FastAPI(
     title="Lab3 FastAPI Project",
@@ -10,3 +11,4 @@ app = FastAPI(
 
 app.include_router(health_router)
 app.include_router(storage_router)
+app.include_router(external_api_router)
