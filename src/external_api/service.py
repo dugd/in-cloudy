@@ -4,15 +4,16 @@ import requests
 
 from .models import PlayerSummary
 from .models.api import PlayerStatsAPI, PlayerProfileAPI, ErrorAPI
+from .config import chess_com_config
 
 class ChessService:
     """Service class for handling chess game data."""
 
-    api_url = "https://api.chess.com/"
-    url = "https://www.chess.com/"
+    api_url = chess_com_config.api_base_url
+    url = chess_com_config.web_base_url
 
     default_headers = {
-        "Host": "api.chess.com",
+        "Host": chess_com_config.api_host,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
