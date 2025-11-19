@@ -1,4 +1,5 @@
 import asyncio
+import nest_asyncio
 from logging.config import fileConfig
 
 from sqlalchemy.engine import Connection
@@ -98,4 +99,5 @@ def run_migrations_online() -> None:
 if context.is_offline_mode():
     run_migrations_offline()
 else:
+    nest_asyncio.apply()
     run_migrations_online()
