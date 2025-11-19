@@ -119,5 +119,6 @@ __all__ = [
     "UserProfileCreate",
     "UserProfileUpdate",
     "UserProfileOut",
+    "UserProfileFullOut",
     "UserStatsOut",
 ]
