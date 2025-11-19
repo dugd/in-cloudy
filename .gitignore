@@ -3,7 +3,10 @@
 __pycache__/
 *.py[cod]
 
-.env
+.env*
+!.env.example
 
 .idea/
 .ruff_cache/
+
+docker-compose.*.yml
