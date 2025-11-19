@@ -31,3 +31,11 @@ async def get_summary(username: str):
         return summary
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/users-by-title", response_model=list[str])
+async def get_users_by_title(title_abbrev: str):
+    try:
+        users = service.get_users_by_title(title_abbrev)
+        return users
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

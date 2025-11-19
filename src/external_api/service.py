@@ -3,7 +3,7 @@ from typing import Optional
 import requests
 
 from .models import PlayerSummary
-from .models.api import PlayerStatsAPI, PlayerProfileAPI, ErrorAPI
+from .models.api import PlayerStatsAPI, PlayerProfileAPI, ErrorAPI, TitlePlayersListAPI
 from .config import chess_com_config
 
 class ChessService:
@@ -35,7 +35,7 @@ class ChessService:
 
     def get_player_profile(self, username) -> PlayerProfileAPI:
         """Fetches the profile of a chess player by username."""
-        response = requests.get(f"{self.api_url}pub/player/{username}", headers=self.default_headers)
+        response = requests.get(f"{self.api_url}/pub/player/{username}", headers=self.default_headers)
         response.raise_for_status()
         try:
             return PlayerProfileAPI(**response.json())
@@ -46,7 +46,7 @@ class ChessService:
 
     def get_player_stats(self, username) -> PlayerStatsAPI:
         """Fetches the statistics of a chess player by username."""
-        response = requests.get(f"{self.api_url}pub/player/{username}/stats", headers=self.default_headers)
+        response = requests.get(f"{self.api_url}/pub/player/{username}/stats", headers=self.default_headers)
         response.raise_for_status()
         try:
             return PlayerStatsAPI(**response.json())
@@ -61,6 +61,17 @@ class ChessService:
         stats = self.get_player_stats(username)
 
         return PlayerSummary.from_api_data(profile=profile, stats=stats)
+
+    def get_users_by_title(self, title_abbrev: str) -> list[str]:
+        """Fetches a list of usernames with a specific chess title."""
+        response = requests.get(f"{self.api_url}/pub/titled/{title_abbrev}", headers=self.default_headers)
+        response.raise_for_status()
+        try:
+            return TitlePlayersListAPI(**response.json()).players
+        except ValueError as e:
+            # might be an error response
+            error_data = ErrorAPI(**response.json())
+            raise ValueError(f"Error fetching users by title: {error_data.code}") from e
 
 
 service = ChessService()
