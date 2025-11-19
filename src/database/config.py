@@ -16,7 +16,6 @@ class PostgresConfig(BaseSettings):
     USERNAME: str
     DATABASE: str
 
-    @property
     def postgres_uri(self, driver: Literal["asyncpg"] = "asyncpg") -> str:
         return f"postgresql+{driver}://{self.USERNAME}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DATABASE}"
 
