@@ -16,7 +16,6 @@ class ChessService:
         "Host": chess_com_config.api_host,
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "en-US,en;q=0.9",
         "Connection": "keep-alive",
     }
@@ -37,23 +36,13 @@ class ChessService:
         """Fetches the profile of a chess player by username."""
         response = requests.get(f"{self.api_url}/pub/player/{username}", headers=self.default_headers)
         response.raise_for_status()
-        try:
-            return PlayerProfileAPI(**response.json())
-        except ValueError as e:
-            # might be an error response
-            error_data = ErrorAPI(**response.json())
-            raise ValueError(f"Error fetching player profile: {error_data.code}") from e
+        return PlayerProfileAPI(**response.json())
 
     def get_player_stats(self, username) -> PlayerStatsAPI:
         """Fetches the statistics of a chess player by username."""
         response = requests.get(f"{self.api_url}/pub/player/{username}/stats", headers=self.default_headers)
         response.raise_for_status()
-        try:
-            return PlayerStatsAPI(**response.json())
-        except ValueError as e:
-            # might be an error response
-            error_data = ErrorAPI(**response.json())
-            raise ValueError(f"Error fetching player stats: {error_data.code}") from e
+        return PlayerStatsAPI(**response.json())
 
     def get_player_summary(self, username) -> PlayerSummary:
         """Fetches the summary of a chess player by username."""
@@ -66,12 +55,7 @@ class ChessService:
         """Fetches a list of usernames with a specific chess title."""
         response = requests.get(f"{self.api_url}/pub/titled/{title_abbrev}", headers=self.default_headers)
         response.raise_for_status()
-        try:
-            return TitlePlayersListAPI(**response.json()).players
-        except ValueError as e:
-            # might be an error response
-            error_data = ErrorAPI(**response.json())
-            raise ValueError(f"Error fetching users by title: {error_data.code}") from e
+        return TitlePlayersListAPI(**response.json()).players
 
 
 service = ChessService()
