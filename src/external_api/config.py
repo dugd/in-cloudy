@@ -7,5 +7,7 @@ class ChessComConfig:
     api_base_url: str = "https://api.chess.com"
     web_base_url: str = "https://www.chess.com"
 
+    cache_ttl: int = 60
+
 
 chess_com_config = ChessComConfig()

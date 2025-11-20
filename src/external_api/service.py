@@ -1,9 +1,8 @@
-from typing import Optional
+import aiohttp
 
-import requests
-
+from src.cache import CacheService
 from .models import PlayerSummary
-from .models.api import PlayerStatsAPI, PlayerProfileAPI, ErrorAPI, TitlePlayersListAPI
+from .models.api import PlayerStatsAPI, PlayerProfileAPI, TitlePlayersListAPI
 from .config import chess_com_config
 
 class ChessService:
@@ -20,42 +19,55 @@ class ChessService:
         "Connection": "keep-alive",
     }
 
-    def __init__(self):
-        self.session: Optional[requests.Session] = None
+    def __init__(self, cache: CacheService):
+        self.session = aiohttp.ClientSession(headers=self.default_headers)
+        self.cache = cache
 
-    def _init_session(self):
-        if self.session is None:
-            self.session = requests.Session()
-
-    def _get_session(self) -> requests.Session:
-        if self.session is None:
-            self._init_session()
-        return self.session
-
-    def get_player_profile(self, username) -> PlayerProfileAPI:
+    async def get_player_profile(self, username) -> PlayerProfileAPI:
         """Fetches the profile of a chess player by username."""
-        response = requests.get(f"{self.api_url}/pub/player/{username}", headers=self.default_headers)
-        response.raise_for_status()
-        return PlayerProfileAPI(**response.json())
 
-    def get_player_stats(self, username) -> PlayerStatsAPI:
+        cache_key = f"player_profile:{username}"
+        cached_profile = await self.cache.cache_get(cache_key)
+        if cached_profile:
+            return PlayerProfileAPI(**cached_profile)
+
+        response = await self.session.get(f"{self.api_url}/pub/player/{username}")
+        response.raise_for_status()
+
+        data = await response.json()
+        await self.cache.cache_set(cache_key, data, ttl=chess_com_config.cache_ttl)  # Cache
+
+        return PlayerProfileAPI(**data)
+
+    async def get_player_stats(self, username) -> PlayerStatsAPI:
         """Fetches the statistics of a chess player by username."""
-        response = requests.get(f"{self.api_url}/pub/player/{username}/stats", headers=self.default_headers)
-        response.raise_for_status()
-        return PlayerStatsAPI(**response.json())
 
-    def get_player_summary(self, username) -> PlayerSummary:
+        cache_key = f"player_stats:{username}"
+        cached_stats = await self.cache.cache_get(cache_key)
+        if cached_stats:
+            return PlayerStatsAPI(**cached_stats)
+
+        response = await self.session.get(f"{self.api_url}/pub/player/{username}/stats")
+        response.raise_for_status()
+
+        data = await response.json()
+        await self.cache.cache_set(
+            cache_key, data, ttl=chess_com_config.cache_ttl
+        )  # Cache
+
+        return PlayerStatsAPI(**data)
+
+    async def get_player_summary(self, username) -> PlayerSummary:
         """Fetches the summary of a chess player by username."""
-        profile = self.get_player_profile(username)
-        stats = self.get_player_stats(username)
+
+        profile = await self.get_player_profile(username)
+        stats = await self.get_player_stats(username)
 
         return PlayerSummary.from_api_data(profile=profile, stats=stats)
 
-    def get_users_by_title(self, title_abbrev: str) -> list[str]:
+    async def get_users_by_title(self, title_abbrev: str) -> list[str]:
         """Fetches a list of usernames with a specific chess title."""
-        response = requests.get(f"{self.api_url}/pub/titled/{title_abbrev}", headers=self.default_headers)
+
+        response = await self.session.get(f"{self.api_url}/pub/titled/{title_abbrev}")
         response.raise_for_status()
-        return TitlePlayersListAPI(**response.json()).players
-
-
-service = ChessService()
+        return TitlePlayersListAPI(**await response.json()).players
