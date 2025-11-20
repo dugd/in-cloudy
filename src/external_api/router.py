@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+import aiohttp
 
 from src.cache import get_cache_service, CacheService
 from .models import PlayerSummary
@@ -9,8 +10,16 @@ from .service import ChessService
 router = APIRouter(prefix="/external-api", tags=["external-api"])
 
 
-async def get_service(cache: CacheService = Depends(get_cache_service)) -> ChessService:
-    return ChessService(cache)
+async def get_http_client():
+    async with aiohttp.ClientSession() as session:
+        yield session
+
+
+async def get_service(
+        cache: CacheService = Depends(get_cache_service),
+        client: aiohttp.ClientSession = Depends(get_http_client),
+) -> ChessService:
+    return ChessService(client, cache)
 
 
 @router.get("/profile", response_model=PlayerProfileAPI)

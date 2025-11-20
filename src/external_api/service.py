@@ -19,8 +19,9 @@ class ChessService:
         "Connection": "keep-alive",
     }
 
-    def __init__(self, cache: CacheService):
-        self.session = aiohttp.ClientSession(headers=self.default_headers)
+    def __init__(self, client: aiohttp.ClientSession, cache: CacheService):
+        self.client = client
+        self.client.headers.update(self.default_headers)
         self.cache = cache
 
     async def get_player_profile(self, username) -> PlayerProfileAPI:
@@ -31,7 +32,7 @@ class ChessService:
         if cached_profile:
             return PlayerProfileAPI(**cached_profile)
 
-        response = await self.session.get(f"{self.api_url}/pub/player/{username}")
+        response = await self.client.get(f"{self.api_url}/pub/player/{username}")
         response.raise_for_status()
 
         data = await response.json()
@@ -47,7 +48,7 @@ class ChessService:
         if cached_stats:
             return PlayerStatsAPI(**cached_stats)
 
-        response = await self.session.get(f"{self.api_url}/pub/player/{username}/stats")
+        response = await self.client.get(f"{self.api_url}/pub/player/{username}/stats")
         response.raise_for_status()
 
         data = await response.json()
@@ -68,6 +69,6 @@ class ChessService:
     async def get_users_by_title(self, title_abbrev: str) -> list[str]:
         """Fetches a list of usernames with a specific chess title."""
 
-        response = await self.session.get(f"{self.api_url}/pub/titled/{title_abbrev}")
+        response = await self.client.get(f"{self.api_url}/pub/titled/{title_abbrev}")
         response.raise_for_status()
         return TitlePlayersListAPI(**await response.json()).players
