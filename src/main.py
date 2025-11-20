@@ -11,7 +11,7 @@ def run_migrations():
     command.upgrade(alembic_cfg, "head")
 
 
-run_migrations()
+# run_migrations()
 
 
 app = FastAPI(

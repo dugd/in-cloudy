@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, Field, HttpUrl, ConfigDict
+from pydantic import BaseModel, Field, HttpUrl, ConfigDict, field_serializer
 
 from src.database.base_schema import BaseOutSchema
 from .config import GameTypes
@@ -25,6 +25,10 @@ class UserProfileCreate(BaseModel):
         None,
         description="URL to the user's avatar image",
     )
+
+    @field_serializer("profile_url", "avatar_url")
+    def _serialize_url(self, url, _info):
+        return str(url)
 
 
 class UserProfileUpdate(BaseModel):

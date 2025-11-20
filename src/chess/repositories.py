@@ -27,17 +27,24 @@ class UserProfileRepository(BaseRepository[UserProfile]):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def get_with_stats(self, username: str) -> Optional[UserProfile]:
-        """Retrieve a user profile along with associated statistics by username."""
+    async def get_with_stats(self, profile_id: int) -> Optional[UserProfile]:
+        """Retrieve a user profile along with associated statistics by id."""
         stmt = (
             select(UserProfile).options(
                 selectinload(UserProfile.stats)
             )
-            .where(UserProfile.username == username)
+            .where(UserProfile.id == profile_id)
         )
 
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def exists(self, profile_id: int) -> bool:
+        """Check if a user profile exists by ID."""
+        stmt = select(func.count()).select_from(UserProfile).where(UserProfile.id == profile_id)
+        result = await self.session.execute(stmt)
+        count = result.scalar_one()
+        return count > 0
 
 
 class UserStatsRepository(BaseRepository[UserStats]):
@@ -61,7 +68,7 @@ class UserStatsRepository(BaseRepository[UserStats]):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def create_by_default(self, profile_id: int) -> List[UserStats]:
+    async def create_by_default_all(self, profile_id: int) -> List[UserStats]:
         """Create default statistics entries for a new user profile."""
         game_types: List[GameTypes] = [game_type for game_type in GameTypes]
         stats_entries = [
@@ -73,6 +80,15 @@ class UserStatsRepository(BaseRepository[UserStats]):
         await self.session.refresh(stats_entries)
 
         return stats_entries
+
+    async def create_by_default(self, profile_id: int, game_type: GameTypes) -> UserStats:
+        """Create a default statistics entry for a new user profile and game type."""
+        stats_entry = UserStats(profile_id=profile_id, game_type=game_type, games_played=0, games_won=0)
+        self.session.add(stats_entry)
+        await self.session.commit()
+        await self.session.refresh(stats_entry)
+
+        return stats_entry
 
     @staticmethod
     async def _update_stats_rating(stats: UserStats, new_rating: int) -> UserStats:
