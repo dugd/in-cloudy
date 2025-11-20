@@ -26,6 +26,7 @@ COPY poetry.lock pyproject.toml /app/
 RUN poetry install --no-interaction --no-ansi
 
 COPY . /app
+RUN chmod +x ./entrypoint.sh # make entrypoint executable
 
 EXPOSE 8080
 
