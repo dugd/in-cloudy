@@ -15,7 +15,7 @@ ENV PYTHONFAULTHANDLER=1 \
 
 ENV PATH="$POETRY_HOME/bin:/root/.local/bin:$PATH"
 
-RUN apt-get update && apt-get install -y --no-install-recommends libpq-dev gcc curl \
+RUN apt-get update && apt-get install -y --no-install-recommends postgresql-client libpq-dev gcc curl \
     && rm -rf /var/lib/apt/lists/* \
     && curl -sSL https://install.python-poetry.org | python3 -
 
@@ -29,4 +29,5 @@ COPY . /app
 
 EXPOSE 8080
 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
