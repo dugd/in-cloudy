@@ -14,4 +14,9 @@ def get_time():
     return {"server_time": datetime.datetime.now().isoformat()}
 
 
+@router.get("/error")
+def trigger_error():
+    division_by_zero = 1 / 0
+    return {"division_by_zero": division_by_zero}
+
 __all__ = ["router"]

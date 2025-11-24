@@ -9,6 +9,7 @@ from src.cache import init_redis, cache_router
 from src.storage import storage_router
 from src.external_api import external_api_router
 from src.chess import chess_router
+from src.telemetry import init_telemetry
 
 def run_migrations():
     alembic_cfg = Config("alembic.ini")
@@ -20,6 +21,7 @@ def run_migrations():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_telemetry()
     redis = init_redis()
 
     app.state.redis = redis
