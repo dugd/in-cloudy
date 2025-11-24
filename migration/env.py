@@ -28,6 +28,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 from src.chess.schema import *  # noqa: F401,E402
 from src.database.base import Base  # noqa: F401,E402
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
