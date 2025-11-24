@@ -6,6 +6,15 @@ from src.main import app
 
 os.environ["TESTING"] = "1"
 
+# Set a default Redis URL for testing purposes (Temporary fix)
+os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
+os.environ.setdefault("PG_HOST", "localhost")
+os.environ.setdefault("PG_PORT", "5432")
+os.environ.setdefault("PG_DATABASE", "test_db")
+os.environ.setdefault("PG_USER", "test_user")
+os.environ.setdefault("PG_PASSWORD", "test_password")
+os.environ.setdefault("SENTRY_DSN", "")
+
 
 @pytest.fixture(scope="session")
 def client():
