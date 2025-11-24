@@ -1,9 +1,7 @@
-from typing import Literal, Optional
-from datetime import datetime
-
-from pydantic import BaseModel, Field, HttpUrl
-
 from .value import ModeStats, PuzzleRush, Tactics
+from datetime import datetime
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Literal, Optional
 
 ChessTimeClass = Literal["bullet", "blitz", "rapid", "daily"]
 
@@ -11,11 +9,12 @@ ChessTimeClass = Literal["bullet", "blitz", "rapid", "daily"]
 # for: https://api.chess.com/pub/player/{username}
 class PlayerProfileAPI(BaseModel):
     """API response for player profile."""
+
     player_id: int
     url: HttpUrl
     username: str
     name: Optional[str] = None
-    title: Optional[str] = None # GM, IM, etc
+    title: Optional[str] = None  # GM, IM, etc
     country: Optional[HttpUrl] = Field(
         default=None,
     )
@@ -28,12 +27,13 @@ class PlayerProfileAPI(BaseModel):
     twitch_url: Optional[HttpUrl] = None
     fide: Optional[int] = None
 
-    status: str = None # basic | premium | staff | closed
+    status: str = None  # basic | premium | staff | closed
 
 
 # for: https://api.chess.com/pub/titled/{title-abbrev}
 class TitlePlayersListAPI(BaseModel):
     """API response for a list of players with a specific title."""
+
     players: list[str]
 
 
@@ -48,6 +48,7 @@ class PlayerStatsAPI(BaseModel):
     tactics: Optional[Tactics] = None
     puzzle_rush: Optional[PuzzleRush] = Field(None, alias="puzzle_rush")
 
+
 class Config:
     allow_population_by_field_name = True
     allow_population_by_alias = True
@@ -57,5 +58,6 @@ class Config:
 # for: any
 class ErrorAPI(BaseModel):
     """API response for an error."""
+
     code: int
     message: str

@@ -1,6 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
 from .config import azure_config
 from .service import StorageService
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 router = APIRouter(prefix="/storage", tags=["Azure Blob Storage"])
 
@@ -13,12 +13,9 @@ if azure_config.is_init():
         """Upload a file to Azure Blob Storage."""
         try:
             filename = service.upload_file(file)
-            return {
-                "message": f"File '{filename}' successfully uploaded to Azure Blob Storage."
-            }
+            return {"message": f"File '{filename}' successfully uploaded to Azure Blob Storage."}
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
     @router.get("/files")
     async def list_files():
@@ -26,8 +23,7 @@ if azure_config.is_init():
         try:
             return {"files": service.list_files()}
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
     @router.get("/files/{filename}")
     async def download_file(filename: str):
@@ -36,23 +32,20 @@ if azure_config.is_init():
             content = service.download_file(filename)
             return {"filename": filename, "content": content}
         except FileNotFoundError as e:
-            raise HTTPException(status_code=404, detail=str(e))
+            raise HTTPException(status_code=404, detail=str(e)) from e
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
     @router.delete("/files/{filename}")
     async def delete_file(filename: str):
         """Delete a file from Azure Blob Storage."""
         try:
             service.delete_file(filename)
-            return {
-                "message": f"File '{filename}' successfully deleted from Azure Blob Storage."
-            }
+            return {"message": f"File '{filename}' successfully deleted from Azure Blob Storage."}
         except FileNotFoundError as e:
-            raise HTTPException(status_code=404, detail=str(e))
+            raise HTTPException(status_code=404, detail=str(e)) from e
         except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 __all__ = ["router"]

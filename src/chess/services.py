@@ -1,10 +1,8 @@
-from typing import Optional, Sequence
-
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from .config import GameTypes, K_FACTOR
-from .models import UserProfileOut, UserProfileFullOut, UserProfileCreate, UserStatsOut
+from .config import K_FACTOR, GameTypes
+from .models import UserProfileCreate, UserProfileFullOut, UserProfileOut, UserStatsOut
 from .repositories import UserProfileRepository, UserStatsRepository
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional, Sequence
 
 
 class UserProfileService:
@@ -85,10 +83,14 @@ class PlayGameService:
 
         return int(round(new_rating1)), int(round(new_rating2))
 
-    async def record_game_result(self, profile1_id: int, profile2_id, game_type: GameTypes, result: bool) -> Optional[tuple[UserStatsOut, UserStatsOut]]:
+    async def record_game_result(
+        self, profile1_id: int, profile2_id, game_type: GameTypes, result: bool
+    ) -> Optional[tuple[UserStatsOut, UserStatsOut]]:
         """Record the result of a game between two users and update their statistics."""
 
-        if not await self.profile_repository.exists(profile1_id) or not await self.profile_repository.exists(profile2_id):
+        if not await self.profile_repository.exists(profile1_id) or not await self.profile_repository.exists(
+            profile2_id
+        ):
             return None
 
         profile1_stats = await self.stats_repository.get_by_profile_and_game_type(profile1_id, game_type)

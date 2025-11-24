@@ -1,13 +1,14 @@
-from typing import Optional, TYPE_CHECKING
-
 from pydantic import BaseModel, Field, HttpUrl
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from .api import PlayerProfileAPI, PlayerStatsAPI
     from .api.value import ModeStats, Record
 
+
 class PlayerModeRecord(BaseModel):
     """A player's record in a specific game mode."""
+
     current_rating: int = Field(description="Current rating in this mode.")
     best_rating: int = Field(description="Highest rating achieved in this mode.")
 
@@ -35,8 +36,10 @@ class PlayerModeRecord(BaseModel):
             draws=record.draw,
         )
 
+
 class PlayerSummary(BaseModel):
     """A summary of the player across all game modes."""
+
     username: str
     name: Optional[str] = Field(None, description="Real name or full name.")
     title: Optional[str] = Field(None, description="Player title, e.g. GM, IM, etc.")
@@ -68,12 +71,8 @@ class PlayerSummary(BaseModel):
     blitz: PlayerModeRecord = Field(..., description="Blitz Chess Statistics.")
     bullet: PlayerModeRecord = Field(..., description="Bullet Chess Statistics.")
 
-    best_puzzle_rush_score: Optional[int] = Field(
-        None, description="Best Puzzle Rush Score."
-    )
-    highest_tactic_rating: Optional[int] = Field(
-        None, description="Highest tactic rating achieved."
-    )
+    best_puzzle_rush_score: Optional[int] = Field(None, description="Best Puzzle Rush Score.")
+    highest_tactic_rating: Optional[int] = Field(None, description="Highest tactic rating achieved.")
 
     @classmethod
     def from_api_data(cls, profile: "PlayerProfileAPI", stats: "PlayerStatsAPI") -> "PlayerSummary":
@@ -82,12 +81,8 @@ class PlayerSummary(BaseModel):
         blitz_record = PlayerModeRecord.from_mod_stats(stats.chess_blitz)
         bullet_record = PlayerModeRecord.from_mod_stats(stats.chess_bullet)
 
-        best_puzzle_rush = (
-            stats.puzzle_rush.best.score if stats.puzzle_rush and stats.puzzle_rush.best else None
-        )
-        highest_tactic = (
-            stats.tactics.highest.rating if stats.tactics and stats.tactics.highest else None
-        )
+        best_puzzle_rush = stats.puzzle_rush.best.score if stats.puzzle_rush and stats.puzzle_rush.best else None
+        highest_tactic = stats.tactics.highest.rating if stats.tactics and stats.tactics.highest else None
 
         return cls(
             username=profile.username,

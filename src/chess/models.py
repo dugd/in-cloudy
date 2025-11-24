@@ -1,8 +1,7 @@
-from typing import Optional
-from pydantic import BaseModel, Field, HttpUrl, ConfigDict, field_serializer
-
-from src.database.base_schema import BaseOutSchema
 from .config import GameTypes
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
+from src.database.base_schema import BaseOutSchema
+from typing import Optional
 
 
 class UserProfileCreate(BaseModel):

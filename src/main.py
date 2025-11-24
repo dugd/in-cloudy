@@ -1,15 +1,14 @@
-from contextlib import asynccontextmanager
-
-from fastapi import FastAPI
-from alembic.config import Config
 from alembic import command
-
-from src.core import health_router
-from src.cache import init_redis, cache_router
-from src.storage import storage_router
-from src.external_api import external_api_router
+from alembic.config import Config
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from src.cache import cache_router, init_redis
 from src.chess import chess_router
+from src.core import health_router
+from src.external_api import external_api_router
+from src.storage import storage_router
 from src.telemetry import init_telemetry, setup_logging
+
 
 def run_migrations():
     alembic_cfg = Config("alembic.ini")
@@ -49,6 +48,7 @@ app.include_router(cache_router)
 app.include_router(storage_router)
 app.include_router(external_api_router)
 app.include_router(chess_router)
+
 
 @app.get("/")
 async def root():

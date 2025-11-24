@@ -1,8 +1,8 @@
+import fakeredis.aioredis
+import os
 import pytest
 from fastapi.testclient import TestClient
 from src.main import app
-import fakeredis.aioredis
-import os
 
 os.environ["TESTING"] = "1"
 

@@ -1,8 +1,7 @@
 """Database connection setup using SQLAlchemy AsyncIO. Import to connect to the database."""
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from .config import postgres_config
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 engine = create_async_engine(postgres_config.postgres_uri(), echo=False)
 

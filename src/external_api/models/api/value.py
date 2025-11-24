@@ -1,7 +1,6 @@
-from typing import Optional
 from datetime import datetime
-
 from pydantic import BaseModel, validator
+from typing import Optional
 
 
 class RatingEntry(BaseModel):
@@ -19,8 +18,8 @@ class RatingEntry(BaseModel):
         try:
             # очікуємо ціле число UNIX timestamp (секунди)
             return datetime.fromtimestamp(int(v))
-        except Exception:
-            raise ValueError("date must be unix timestamp (int) or datetime")
+        except Exception as e:
+            raise ValueError("date must be unix timestamp (int) or datetime") from e
 
 
 class Record(BaseModel):
@@ -49,8 +48,8 @@ class TacticScore(BaseModel):
             return v
         try:
             return datetime.fromtimestamp(int(v))
-        except Exception:
-            raise ValueError("date must be unix timestamp (int) or datetime")
+        except Exception as e:
+            raise ValueError("date must be unix timestamp (int) or datetime") from e
 
 
 class Tactics(BaseModel):

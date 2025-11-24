@@ -1,9 +1,7 @@
-from typing import Type, TypeVar, Generic, Optional, Sequence
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-
 from src.database.base_mixins import RecordMixin
-
+from typing import Generic, Optional, Sequence, Type, TypeVar
 
 # RecordMixin is used as a bound to ensure the model has an 'id' attribute
 ModelType = TypeVar("ModelType", bound=RecordMixin)
@@ -38,12 +36,7 @@ class BaseRepository(Generic[ModelType]):
 
     async def update(self, obj_id: int, data: dict) -> Optional[ModelType]:
         """Update an existing record and return the updated model instance."""
-        stmt = (
-            update(self.model)
-            .where(self.model.id == obj_id)
-            .values(**data)
-            .returning(self.model)
-        )
+        stmt = update(self.model).where(self.model.id == obj_id).values(**data).returning(self.model)
         result = await self.session.execute(stmt)
         updated = result.scalar_one_or_none()
         await self.session.commit()

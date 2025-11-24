@@ -1,8 +1,8 @@
 """Base classes and metadata for SQLAlchemy models."""
-from sqlalchemy import MetaData
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
-from sqlalchemy.ext.asyncio import AsyncAttrs
 
+from sqlalchemy import MetaData
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase
 
 my_metadata = MetaData(
     naming_convention={
@@ -13,6 +13,7 @@ my_metadata = MetaData(
         "pk": "%(table_name)s_pkey",
     }
 )
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     metadata = my_metadata

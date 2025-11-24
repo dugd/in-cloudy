@@ -1,10 +1,10 @@
-from typing import Literal
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Literal
 
 
 class PostgresConfig(BaseSettings):
     """Configuration settings for connecting to a PostgreSQL database."""
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_prefix="PG_",

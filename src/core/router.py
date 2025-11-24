@@ -1,6 +1,5 @@
-import logging
 import datetime
-
+import logging
 import sentry_sdk
 from fastapi import APIRouter, HTTPException
 
@@ -25,7 +24,7 @@ def get_time():
     except Exception as e:
         logger.exception("[COMMON][TIME] error")
         sentry_sdk.capture_exception(e)
-        raise HTTPException(500, "Failed to get server time")
+        raise HTTPException(500, "Failed to get server time") from e
 
 
 @router.get("/error")
@@ -40,6 +39,7 @@ def trigger_error():
     except Exception as e:
         logger.exception("[COMMON][SENTRY-DEBUG] Division by zero error")
         sentry_sdk.capture_exception(e)
-        raise HTTPException(500, "Triggered Sentry test error")
+        raise HTTPException(500, "Triggered Sentry test error") from e
+
 
 __all__ = ["router"]

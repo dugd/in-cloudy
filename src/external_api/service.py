@@ -1,9 +1,9 @@
 import aiohttp
-
-from src.cache import CacheService
-from .models import PlayerSummary
-from .models.api import PlayerStatsAPI, PlayerProfileAPI, TitlePlayersListAPI
 from .config import chess_com_config
+from .models import PlayerSummary
+from .models.api import PlayerProfileAPI, PlayerStatsAPI, TitlePlayersListAPI
+from src.cache import CacheService
+
 
 class ChessService:
     """Service class for handling chess game data."""
@@ -52,9 +52,7 @@ class ChessService:
         response.raise_for_status()
 
         data = await response.json()
-        await self.cache.cache_set(
-            cache_key, data, ttl=chess_com_config.cache_ttl
-        )  # Cache
+        await self.cache.cache_set(cache_key, data, ttl=chess_com_config.cache_ttl)  # Cache
 
         return PlayerStatsAPI(**data)
 

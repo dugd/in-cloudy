@@ -1,5 +1,5 @@
-from azure.core.exceptions import ResourceNotFoundError
 from .config import azure_config
+from azure.core.exceptions import ResourceNotFoundError
 
 
 class StorageService:
@@ -25,7 +25,7 @@ class StorageService:
             stream = blob_client.download_blob()
             return stream.readall().decode("utf-8", errors="ignore")
         except ResourceNotFoundError:
-            raise FileNotFoundError(f"File '{filename}' not found")
+            raise FileNotFoundError(f"File '{filename}' not found") from None
 
     def delete_file(self, filename: str):
         """Delete a file from the container."""
@@ -33,7 +33,7 @@ class StorageService:
         try:
             blob_client.delete_blob()
         except ResourceNotFoundError:
-            raise FileNotFoundError(f"File '{filename}' not found")
+            raise FileNotFoundError(f"File '{filename}' not found") from None
 
 
 __all__ = ["StorageService"]

@@ -1,14 +1,14 @@
-from typing import Optional, List
+from .config import GameTypes
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, ForeignKey, UniqueConstraint
-
 from src.database.base import Base
 from src.database.base_mixins import RecordMixin, TimestampMixin
-from .config import GameTypes
+from typing import List, Optional
 
 
 class UserProfile(Base, RecordMixin, TimestampMixin):
     """SQLAlchemy model for chess user profiles."""
+
     __tablename__ = "user_profiles"
 
     username: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
@@ -21,10 +21,9 @@ class UserProfile(Base, RecordMixin, TimestampMixin):
 
 class UserStats(Base, RecordMixin, TimestampMixin):
     """SQLAlchemy model for chess user statistics."""
+
     __tablename__ = "user_stats"
-    __table_args__ = (
-        UniqueConstraint("profile_id", "game_type"),
-    )
+    __table_args__ = (UniqueConstraint("profile_id", "game_type"),)
 
     game_type: Mapped[GameTypes] = mapped_column(String(50), nullable=False)
     games_played: Mapped[int] = mapped_column(Integer, default=0)

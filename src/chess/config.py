@@ -6,4 +6,5 @@ class GameTypes(StrEnum):
     BLITZ = "blitz"
     RAPID = "rapid"
 
+
 K_FACTOR = 32
