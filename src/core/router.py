@@ -1,22 +1,45 @@
-from fastapi import APIRouter
+import logging
 import datetime
+
+import sentry_sdk
+from fastapi import APIRouter, HTTPException
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/common", tags=["common"])
 
 
 @router.get("/healthcheck")
 def healthcheck():
+    logger.info("[COMMON][HEALTHCHECK] Service health check called")
     return {"status": "ok", "message": "Service is running"}
 
 
 @router.get("/time")
 def get_time():
-    return {"server_time": datetime.datetime.now().isoformat()}
+    logger.info("[COMMON][TIME] Get server time")
+    try:
+        now = datetime.datetime.now().isoformat()
+        logger.debug(f"[COMMON][TIME] current time={now}")
+        return {"server_time": now}
+    except Exception as e:
+        logger.exception("[COMMON][TIME] error")
+        sentry_sdk.capture_exception(e)
+        raise HTTPException(500, "Failed to get server time")
 
 
 @router.get("/error")
 def trigger_error():
-    division_by_zero = 1 / 0
-    return {"division_by_zero": division_by_zero}
+    logger.info("[COMMON][SENTRY-DEBUG] Trigger manual Sentry exception")
+
+    try:
+        division_by_zero = 1 / 0
+
+        return {"division_by_zero": division_by_zero}
+
+    except Exception as e:
+        logger.exception("[COMMON][SENTRY-DEBUG] Division by zero error")
+        sentry_sdk.capture_exception(e)
+        raise HTTPException(500, "Triggered Sentry test error")
 
 __all__ = ["router"]
