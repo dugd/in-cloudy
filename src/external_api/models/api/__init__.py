@@ -48,11 +48,10 @@ class PlayerStatsAPI(BaseModel):
     tactics: Optional[Tactics] = None
     puzzle_rush: Optional[PuzzleRush] = Field(None, alias="puzzle_rush")
 
-
-class Config:
-    allow_population_by_field_name = True
-    allow_population_by_alias = True
-    extra = "ignore"
+    class Config:
+        allow_population_by_field_name = True
+        allow_population_by_alias = True
+        extra = "ignore"
 
 
 # for: any
