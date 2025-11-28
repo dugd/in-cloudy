@@ -1,10 +1,8 @@
-import fakeredis.aioredis
 import os
+
 import pytest
 from fastapi.testclient import TestClient
-from src.main import app
-
-os.environ["TESTING"] = "1"
+import fakeredis.aioredis
 
 # Set a default Redis URL for testing purposes (Temporary fix)
 os.environ.setdefault("REDIS_URL", "redis://localhost:6379/0")
@@ -14,6 +12,10 @@ os.environ.setdefault("PG_DATABASE", "test_db")
 os.environ.setdefault("PG_USER", "test_user")
 os.environ.setdefault("PG_PASSWORD", "test_password")
 os.environ.setdefault("SENTRY_DSN", "")
+
+from src.main import app
+
+os.environ["TESTING"] = "1"
 
 
 @pytest.fixture(scope="session")
